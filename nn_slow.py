@@ -259,17 +259,17 @@ def set_dataframe(df):
     return x_data_norm, labels_organized
 
 
-neural_network = construct_nn()
+# neural_network = construct_nn()
 
-data = pd.read_csv("dataset\sign_mnist_test.csv", sep=";", encoding="utf-8")
-df = pd.DataFrame(data)
-train_features, train_labels = set_dataframe(df)
+# data = pd.read_csv("dataset\sign_mnist_test.csv", sep=";", encoding="utf-8")
+# df = pd.DataFrame(data)
+# train_features, train_labels = set_dataframe(df)
 
-no_epochs = 100
-for i in range(no_epochs):
-    nn_trained = single_epoch(neural_network, train_features, train_labels)
-    print("ended epoch")
+# no_epochs = 100
+# for i in range(no_epochs):
+#     nn_trained = single_epoch(neural_network, train_features, train_labels)
+#     print("ended epoch")
 
-y = get_test_output(neural_network, [train_features[0]])
-print(y)
+# y = get_test_output(neural_network, [train_features[0]])
+# print(y)
 
