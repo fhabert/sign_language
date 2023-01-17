@@ -1,12 +1,15 @@
 import cv2 as cv
 import numpy as np
 import csv
-import nn_slow
+import nn_sign
 
 cap = cv.VideoCapture(0)
 if not cap.isOpened():
     print("Cannot open camera")
     exit()
+
+word = []
+# model = nn_sign.model()
 
 while True:
     ret, frame = cap.read()
@@ -22,9 +25,13 @@ while True:
     # Display the resulting frame
     # img = cv.imread(frame)
     hand = frame[50:350, 150:450]
+    # value = model.get_output(model, hand)
+    # word.append(value)
+    
     cv.imshow('frame', frame)
     if cv.waitKey(1) == ord('q'):
         break
-
+    
+# print(word)
 cap.release()
 cv.destroyAllWindows()
