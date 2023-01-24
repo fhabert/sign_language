@@ -16,7 +16,7 @@ def get_my_model():
     my_model.add(Dense(24, activation="tanh"))
     opt = Adam(learning_rate=0.0005)
     my_model.compile(loss='mse', metrics=['mae'], optimizer=opt)
-    my_model.fit(np.asarray(features_train).astype('float64'), np.asarray(labels_train).astype('float64'), epochs=40, batch_size=16)
+    my_model.fit(np.asarray(features_train).astype('float64'), np.asarray(labels_train).astype('float64'), epochs=50, batch_size=16)
     return my_model
 
 def set_dataframe(df):
@@ -38,17 +38,15 @@ def set_dataframe(df):
 
 def get_output(n, features, test):
     output = 0
-    # normalize_func = np.vectorize(lambda t: t ** 1/255)
-    # norm_val = normalize_func(features)
     input = np.asfarray(features)
     formated_input = [[x for x in input]]
     outputs = n.predict(formated_input)
-    final_output = round(np.argmax(np.array(outputs[0])))+1
-    # output_test = round(np.argmax(np.array(test)))
+    final_output = round(np.argmax(np.array(outputs[0])))
+    output_test = round(np.argmax(np.array(test)))
     print(outputs)
     print(final_output)
-    print(test)
-    if final_output == test:
+    print(output_test)
+    if final_output == output_test:
         output = 1
     return final_output, output    
 
