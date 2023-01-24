@@ -48,7 +48,17 @@ def get_output(n, features, test):
     print(output_test)
     if final_output == output_test:
         output = 1
-    return final_output, output    
+    return final_output, output   
+
+def create_model():
+  my_model = Sequential()
+  input = InputLayer(input_shape=(784, ))
+  my_model.add(input)
+  my_model.add(Dense(200, activation="tanh"))
+  my_model.add(Dense(24, activation="tanh"))
+  opt = Adam(learning_rate=0.0005)
+  my_model.compile(loss='mse', metrics=['mae'], optimizer=opt)
+  return my_model 
 
 data_test = pd.read_csv("dataset\sign_mnist_test.csv", sep=";", encoding="utf-8")
 df_test = pd.DataFrame(data_test)
@@ -58,14 +68,15 @@ features_test, labels_test = set_dataframe(df_test)
 features_train, labels_train = set_dataframe(df_train) 
 
 print("Getting the model")
-model = get_my_model()
+# model = get_my_model()
 print("All good")
 
-results = []
-for i in range(10):
-    features = features_test[i]
-    lab = labels_test[i]
-    result, output = get_output(model, features, lab)
-    results.append(output)
+# model.save_weights('./my_checkpoint')
+# results = []
+# for i in range(10):
+#     features = features_test[i]
+#     lab = labels_test[i]
+#     result, output = get_output(model, features, lab)
+#     results.append(output)
 
-print("Percentage of success:", sum(results)/len(results))
+# print("Percentage of success:", sum(results)/len(results))
