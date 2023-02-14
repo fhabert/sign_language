@@ -21,7 +21,7 @@ from PIL import Image
 
 def set_dataframe(df):
     labels_df = sorted(list(df.label.unique()))
-    normalize_func = np.vectorize(lambda t: t ** 1/255)
+    normalize_func = np.vectorize(lambda t: t * 1/255)
     x_data_norm = []
     for i in range(len(df)):
         row = normalize_func(np.array(df.iloc[i][1:]))
