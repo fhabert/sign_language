@@ -6,9 +6,9 @@ from PIL import Image
 import time
 import math
 
-cap = cv.VideoCapture(0)
+cap = cv.VideoCapture(1)
 cap.set(cv.CAP_PROP_AUTOFOCUS, 0)
-cap.set(cv.CAP_PROP_BRIGHTNESS, 0)
+cap.set(cv.CAP_PROP_BRIGHTNESS, 100)
 
 if not cap.isOpened():
     print("Cannot open camera")
@@ -60,10 +60,9 @@ start_time = time.time()
 movement_start_time = time.time()
 
 last_frame_time = 0
-fps = 1
+fps = 10
 
 while True:
-    
     if cv.waitKey(1) == ord('q'):
         break
     ret, frame_full = cap.read()
@@ -77,7 +76,7 @@ while True:
             for item in lines_coor:
                 cv.line(img=frame_full, pt1=item[0], pt2=item[1], color=colors["green"], thickness=1, lineType=8, shift=0)
     cv.imshow('frame', frame_full)
-    if time.time() - start_time < 4:
+    if time.time() - start_time < 2:
         continue
     frame_full = np.array(frame_full)
     frame = frame_full[y_start : y_end, x_start : x_end, : ]
@@ -89,19 +88,20 @@ while True:
             background_pix = frame
             pixels_value = np.array(background_pix).flatten()
     
-        print("back: ", np.mean(background_pix))
-        print("frame: ", np.mean(frame))
+        # print("back: ", np.mean(background_pix))
+        # print("frame: ", np.mean(frame))
         # print("sub: ", np.mean(frame - background_pix, axis=None))
-        if last_frame is not None:
-            diff = np.abs(np.mean(frame - background_pix, axis=None) - np.mean(last_frame - background_pix, axis=None))
-            print("diff: ", diff)
-            if diff > threshold_pix and (time.time() - movement_start_time > 1 or not hand_present):
-                hand_present = not hand_present
-                movement_start_time = time.time()
+        diff = np.abs(np.mean(frame) - np.mean(background_pix))
+        print("diff: ", diff)
+        if diff > 4:
+            hand_present = True
+        else:
+            hand_present = False
+        # if diff < 3:
+        #     background_pix = frame
         last_frame = frame
+        prev_diff = diff
         # if np.mean(background_pix, axis=)
-
-        
 
         if cv.waitKey(1) == ord('t'):
             hand_pixels = get_pixels_hands(frame)
