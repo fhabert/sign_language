@@ -6,7 +6,7 @@ from PIL import Image
 import time
 import math
 
-cap = cv.VideoCapture(1)
+cap = cv.VideoCapture(0)
 cap.set(cv.CAP_PROP_AUTOFOCUS, 0)
 cap.set(cv.CAP_PROP_BRIGHTNESS, 100)
 
