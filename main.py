@@ -9,6 +9,10 @@ import math
 cap = cv.VideoCapture(0)
 cap.set(cv.CAP_PROP_AUTOFOCUS, 0)
 cap.set(cv.CAP_PROP_BRIGHTNESS, 100)
+cap.set(cv.CAP_PROP_AUTO_WB, 1)
+cap.set(cv.CAP_PROP_AUTO_EXPOSURE, 0.25) #manual mode
+cap.set(cv.CAP_PROP_EXPOSURE, -12)
+
 
 if not cap.isOpened():
     print("Cannot open camera")
@@ -109,7 +113,7 @@ while True:
             img_resize = img.resize((28,28))
             img_grey_scale = [[np.uint8(sum(x)/3) for x in inner_list] for inner_list in np.asarray(img_resize)]
             # img_grey = Image.fromarray(np.uint8(img_grey_scale), "L")
-            img_resize.show()
+            # img_resize.show()
             pixels = np.array(img_grey_scale).flatten()
             normalize_func = np.vectorize(lambda t: t * 1/255)
             pixels_norm = normalize_func(np.array(pixels))
@@ -129,10 +133,6 @@ print("The word was:", ("").join(word))
 cap.release()
 cv.destroyAllWindows()
 
-
-
-
-    
 # li = np.asarray(list(nn_sign.df_test.iloc[0][1:])).reshape((28,28))
 # img_array = Image.fromarray(np.asarray(li), "L")
 # img_grey = img_array.show()
