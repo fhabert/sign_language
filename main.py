@@ -8,11 +8,9 @@ import math
 
 cap = cv.VideoCapture(0)
 cap.set(cv.CAP_PROP_AUTOFOCUS, 0)
-cap.set(cv.CAP_PROP_BRIGHTNESS, 100)
 cap.set(cv.CAP_PROP_AUTO_WB, 1)
 cap.set(cv.CAP_PROP_AUTO_EXPOSURE, 0.25) #manual mode
-cap.set(cv.CAP_PROP_EXPOSURE, -12)
-
+cap.set(cv.CAP_PROP_EXPOSURE, -7)
 
 if not cap.isOpened():
     print("Cannot open camera")
@@ -24,7 +22,6 @@ colors = {"blue": (255, 0, 0), "green": (0,255,0)}
 
 model = nn_sign.create_model()
 model.load_weights("./my_checkpoint")
-
 decoding = [chr(i) for i in range(65, 91)]
 x_start, y_start, x_end, y_end = 50, 150, 350, 450
 
@@ -53,19 +50,15 @@ def show_hist(frame):
 
 background_pix = None
 start_time = time.time()
-last_frame = None
-threshold_pix = 5
+threshold_pix = 0.02
 
 lines_coor = [[(x_start, y_start), (x_end, y_start)], [(x_start, y_end), (x_end, y_end)], 
             [(x_start, y_start), (x_start, y_end)], [(x_end, y_start), (x_end, y_end)]]
 
 hand_present = False
-start_time = time.time()
-movement_start_time = time.time()
-
 last_frame_time = 0
 fps = 10
-
+prev_diff = 0
 while True:
     if cv.waitKey(1) == ord('q'):
         break
@@ -79,60 +72,41 @@ while True:
         if hand_present:
             for item in lines_coor:
                 cv.line(img=frame_full, pt1=item[0], pt2=item[1], color=colors["green"], thickness=1, lineType=8, shift=0)
+    
     cv.imshow('frame', frame_full)
-    if time.time() - start_time < 2:
-        continue
+
     frame_full = np.array(frame_full)
     frame = frame_full[y_start : y_end, x_start : x_end, : ]
-    frame = np.dot(frame[...,:3], [0.2989, 0.5870, 0.1140])
+    frame = np.dot(frame[...,:3], [0.2989, 0.5870, 0.1140]) / 255
+    frame_blured = cv.GaussianBlur(frame, (21, 21), cv.BORDER_DEFAULT)
+
+    
     if time.time() - last_frame_time > 1 / fps:
         last_frame_time = time.time()
 
         if background_pix is None:
-            background_pix = frame
-            pixels_value = np.array(background_pix).flatten()
-    
-        # print("back: ", np.mean(background_pix))
-        # print("frame: ", np.mean(frame))
-        # print("sub: ", np.mean(frame - background_pix, axis=None))
-        diff = np.abs(np.mean(frame) - np.mean(background_pix))
-        print("diff: ", diff)
-        if diff > 4:
+            background_pix = frame_blured
+
+        diff = np.abs(np.mean(frame_blured) - np.mean(background_pix))
+        # print("diff: ", diff)
+        if diff > threshold_pix:
             hand_present = True
         else:
             hand_present = False
-        # if diff < 3:
-        #     background_pix = frame
-        last_frame = frame
+        if diff < threshold_pix and diff > 0.01:
+            background_pix = frame_blured
         prev_diff = diff
-        # if np.mean(background_pix, axis=)
-
-        if cv.waitKey(1) == ord('t'):
-            hand_pixels = get_pixels_hands(frame)
-            img = Image.fromarray(np.uint8(hand_pixels))
-            img_resize = img.resize((28,28))
-            img_grey_scale = [[np.uint8(sum(x)/3) for x in inner_list] for inner_list in np.asarray(img_resize)]
-            # img_grey = Image.fromarray(np.uint8(img_grey_scale), "L")
-            # img_resize.show()
-            pixels = np.array(img_grey_scale).flatten()
-            normalize_func = np.vectorize(lambda t: t * 1/255)
-            pixels_norm = normalize_func(np.array(pixels))
-            input = np.asfarray(pixels_norm)
-            formated_input = [[x for x in input]]
-            outputs = model.predict(formated_input)
-            final_output = round(np.argmax(np.array(outputs[0])))
+        if hand_present:
+            frame_28 = np.asarray(Image.fromarray(np.uint8(frame)).resize((28,28)))
+            pred = model.predict(frame_28.flatten().reshape(1, -1), verbose=0)
+            final_output = round(np.argmax(pred[0]))
+            print("letter: ", decoding[final_output])
             if len(word) == 0:
                 word.append(decoding[final_output])
             else:
                 word.append(decoding[final_output].lower())
-            time.sleep(2)
-            print("The sign is:", decoding[final_output])
-
 
 print("The word was:", ("").join(word))
 cap.release()
 cv.destroyAllWindows()
 
-# li = np.asarray(list(nn_sign.df_test.iloc[0][1:])).reshape((28,28))
-# img_array = Image.fromarray(np.asarray(li), "L")
-# img_grey = img_array.show()
