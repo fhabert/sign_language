@@ -20,7 +20,7 @@ hand_pixels = []
 word = []
 colors = {"blue": (255, 0, 0), "green": (0,255,0)}
 
-model = nn_sign.create_model()
+model = nn_sign.cnn_model()
 model.load_weights("./my_checkpoint")
 decoding = [chr(i) for i in range(65, 91)]
 x_start, y_start, x_end, y_end = 50, 150, 350, 450
@@ -98,13 +98,14 @@ while True:
         prev_diff = diff
         if hand_present:
             frame_28 = np.asarray(Image.fromarray(np.uint8(frame)).resize((28,28)))
-            pred = model.predict(frame_28.flatten().reshape(1, -1), verbose=0)
+            reshape_feature = np.reshape(frame_28, (1, 28, 28, 1))
+            pred = model.predict(reshape_feature, verbose=0)
             final_output = round(np.argmax(pred[0]))
             print("letter: ", decoding[final_output])
-            if len(word) == 0:
-                word.append(decoding[final_output])
-            else:
-                word.append(decoding[final_output].lower())
+            # if len(word) == 0:
+            #     word.append(decoding[final_output])
+            # else:
+            #     word.append(decoding[final_output].lower())
 
 print("The word was:", ("").join(word))
 cap.release()
