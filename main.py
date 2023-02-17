@@ -50,7 +50,7 @@ def show_hist(frame):
 
 background_pix = None
 start_time = time.time()
-threshold_pix = 0.02
+threshold_pix = 0.05
 
 lines_coor = [[(x_start, y_start), (x_end, y_start)], [(x_start, y_end), (x_end, y_end)], 
             [(x_start, y_start), (x_start, y_end)], [(x_end, y_start), (x_end, y_end)]]
@@ -59,6 +59,7 @@ hand_present = False
 last_frame_time = 0
 fps = 10
 prev_diff = 0
+
 while True:
     if cv.waitKey(1) == ord('q'):
         break
@@ -88,7 +89,7 @@ while True:
             background_pix = frame_blured
 
         diff = np.abs(np.mean(frame_blured) - np.mean(background_pix))
-        # print("diff: ", diff)
+        print("diff: ", diff)
         if diff > threshold_pix:
             hand_present = True
         else:

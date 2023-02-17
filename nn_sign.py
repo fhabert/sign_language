@@ -10,30 +10,27 @@ import matplotlib.pyplot as plt
 from tensorflow.keras.optimizers import Adam
 from PIL import Image
 
-# def get_my_model():
-#     my_model = Sequential()
-#     input = InputLayer(input_shape=(784, ))
-#     my_model.add(input)
-#     my_model.add(Dense(200, activation="tanh"))
-#     my_model.add(Dense(24, activation="tanh"))
-#     opt = Adam(learning_rate=0.0005)
-#     my_model.compile(loss='mse', metrics=['mae'], optimizer=opt)
-#     my_model.fit(np.asarray(features_train).astype('float64'), np.asarray(labels_train).astype('float64'), epochs=50, batch_size=16)
-#     return my_model
+def get_my_model():
+    my_model = Sequential()
+    input = InputLayer(input_shape=(784, ))
+    my_model.add(input)
+    my_model.add(Dense(200, activation="tanh"))
+    my_model.add(Dense(24, activation="tanh"))
+    opt = Adam(learning_rate=0.0005)
+    my_model.compile(loss='mse', metrics=['mae'], optimizer=opt)
+    my_model.fit(np.asarray(features_train).astype('float64'), np.asarray(labels_train).astype('float64'), epochs=50, batch_size=16)
+    return my_model
 
 def cnn_model():
     my_model = Sequential()
-    my_model.add(layers.Conv2D(32, kernel_size=3, strides=1, activation="relu", input_shape=(28, 28, 1), padding="valid"))
-    my_model.add(layers.MaxPooling2D(pool_size=(2,2), padding="valid"))
-    my_model.add(layers.Conv2D(64, kernel_size=3, strides=1, activation="relu", padding="valid"))
-    my_model.add(layers.MaxPooling2D(pool_size=(2,2), padding="valid"))
-    my_model.add(layers.Conv2D(64, kernel_size=3, strides=1, activation="relu", padding="valid"))
+    my_model.add(layers.Conv2D(32, kernel_size=(3,3), strides=1, activation="relu", input_shape=(28, 28, 1)))
+    # my_model.add(layers.MaxPooling2D(pool_size=(2,2), padding="valid"))
+    # my_model.add(layers.Conv2D(64, kernel_size=3, strides=1, activation="relu", padding="valid"))
+    # my_model.add(layers.MaxPooling2D(pool_size=(2,2), padding="valid"))
+    # my_model.add(layers.Conv2D(64, kernel_size=3, strides=1, activation="relu", padding="valid"))
     my_model.add(layers.Flatten())
-    my_model.add(Dense(64, activation="relu"))
-    my_model.add(Dense(24, activation="sigmoid"))
-    my_model.compile(optimizer='adam', loss=tf.keras.losses.BinaryCrossentropy(), metrics=["accuracy"])
-    # my_model.fit(features_train.astype('float64'), labels_train.astype('float64'), epochs=10, \
-    #                 validation_data=(features_test.astype("float64"), labels_test.astype("float64")))
+    # my_model.add(Dense(64, activation="relu"))
+    my_model.add(Dense(24, activation="softmax")) # softmax
     return my_model
 
 def set_dataframe(df):
@@ -64,25 +61,29 @@ def get_output(n, features, test):
     print(output_test)
     if final_output == output_test:
         output = 1
-    return final_output, output   
+    return final_output, output
 
-# data_test = pd.read_csv("dataset\sign_mnist_test.csv", sep=";", encoding="utf-8")
-# df_test = pd.DataFrame(data_test)
-# data_train = pd.read_csv("dataset\sign_mnist_train.csv", sep=";", encoding="utf-8")
-# df_train = pd.DataFrame(data_train)
-# features_test, labels_test = set_dataframe(df_test)
-# features_train, labels_train = set_dataframe(df_train) 
+data_test = pd.read_csv("dataset\sign_mnist_test.csv", sep=";", encoding="utf-8")
+df_test = pd.DataFrame(data_test)
+data_train = pd.read_csv("dataset\sign_mnist_train.csv", sep=";", encoding="utf-8")
+df_train = pd.DataFrame(data_train)
+features_test, labels_test = set_dataframe(df_test)
+features_train, labels_train = set_dataframe(df_train) 
 
 print("Getting the model")
-# model = cnn_model()
+model = cnn_model()
+optimizer=tf.keras.optimizers.Adam(learning_rate=0.001)
+model.compile(optimizer=optimizer, loss=tf.keras.losses.CategoricalCrossentropy(), metrics=["accuracy"])
+model.fit(features_train, labels_train, shuffle=True, epochs=10, \
+            validation_data=(features_test, labels_test))
 print("All good")
 
 # model.save_weights('./my_checkpoint')
-# results = []
-# for i in range(10):
-#     features = features_test[i]
-#     lab = labels_test[i]
-#     result, output = get_output(model, features, lab)
-#     results.append(output)
+results = []
+for i in range(10):
+    features = features_test[i]
+    lab = labels_test[i]
+    result, output = get_output(model, features, lab)
+    results.append(output)
 
-# print("Percentage of success:", sum(results)/len(results))
+print("Percentage of success:", sum(results)/len(results))
