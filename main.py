@@ -1,16 +1,17 @@
 import cv2 as cv
 import numpy as np
-import nn_sign
+# import nn_sign
 import matplotlib.pyplot as plt
 from PIL import Image
 import time
 import math
+import tensorflow as tf
 
-cap = cv.VideoCapture(0)
+cap = cv.VideoCapture(1)
 cap.set(cv.CAP_PROP_AUTOFOCUS, 0)
 cap.set(cv.CAP_PROP_AUTO_WB, 1)
 cap.set(cv.CAP_PROP_AUTO_EXPOSURE, 0.25) #manual mode
-cap.set(cv.CAP_PROP_EXPOSURE, -7)
+cap.set(cv.CAP_PROP_EXPOSURE, -4)
 
 if not cap.isOpened():
     print("Cannot open camera")
@@ -20,10 +21,10 @@ hand_pixels = []
 word = []
 colors = {"blue": (255, 0, 0), "green": (0,255,0)}
 
-model = nn_sign.cnn_model()
-model.load_weights("./my_checkpoint")
+model = tf.keras.models.load_model("cnn1")
 decoding = [chr(i) for i in range(65, 91)]
 x_start, y_start, x_end, y_end = 50, 150, 350, 450
+
 
 
 def get_pixels_hands(frame):
@@ -89,7 +90,7 @@ while True:
             background_pix = frame_blured
 
         diff = np.abs(np.mean(frame_blured) - np.mean(background_pix))
-        print("diff: ", diff)
+        # print("diff: ", diff)
         if diff > threshold_pix:
             hand_present = True
         else:
@@ -98,9 +99,12 @@ while True:
             background_pix = frame_blured
         prev_diff = diff
         if hand_present:
-            frame_28 = np.asarray(Image.fromarray(np.uint8(frame)).resize((28,28)))
-            reshape_feature = np.reshape(frame_28, (1, 28, 28, 1))
-            pred = model.predict(reshape_feature, verbose=0)
+            frame_28 = np.asarray(Image.fromarray(frame).resize((28,28)))
+            # reshape_feature = np.reshape(frame_28, (1, 28, 28, 1))
+            # plt.imshow(frame_28)
+            # plt.show()
+            frame_28 = frame_28.reshape(1, 28, 28, 1)
+            pred = model.predict(frame_28, verbose=0)
             final_output = round(np.argmax(pred[0]))
             print("letter: ", decoding[final_output])
             # if len(word) == 0:
