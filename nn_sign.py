@@ -45,23 +45,23 @@ def get_output(n, features, test):
         output = 1
     return final_output, output
 
-data_test = pd.read_csv("dataset\sign_mnist_test.csv", sep=";", encoding="utf-8")
-df_test = pd.DataFrame(data_test)
-data_train = pd.read_csv("dataset\sign_mnist_train.csv", sep=";", encoding="utf-8")
-df_train = pd.DataFrame(data_train)
+# data_test = pd.read_csv("dataset\sign_mnist_test.csv", sep=";", encoding="utf-8")
+# df_test = pd.DataFrame(data_test)
+# data_train = pd.read_csv("dataset\sign_mnist_train.csv", sep=";", encoding="utf-8")
+# df_train = pd.DataFrame(data_train)
 
-df_train.drop_duplicates(subset='label').sort_values(by='label')
+# df_train.drop_duplicates(subset='label').sort_values(by='label')
 
-Y_train = df_train.iloc[:, 0].to_numpy()
-X_train = df_train.iloc[:, 1:].to_numpy().reshape(-1, 28, 28)
-Y_test = df_test.iloc[:, 0].to_numpy()
-X_test = df_test.iloc[:, 1:].to_numpy().reshape(-1, 28, 28)
+# Y_train = df_train.iloc[:, 0].to_numpy()
+# X_train = df_train.iloc[:, 1:].to_numpy().reshape(-1, 28, 28)
+# Y_test = df_test.iloc[:, 0].to_numpy()
+# X_test = df_test.iloc[:, 1:].to_numpy().reshape(-1, 28, 28)
 
 # print("Getting the model")
 # model = cnn_model()
 # optimizer=tf.keras.optimizers.Adam(learning_rate=0.001)
 # model.compile(optimizer=optimizer, loss=tf.keras.losses.SparseCategoricalCrossentropy(), metrics=["accuracy"])
-# model.fit(X_train, Y_train, batch_size=16, shuffle=True, epochs=4, validation_data=(X_test, Y_test))
+# model.fit(X_train, Y_train, batch_size=16, shuffle=True, epochs=5, validation_data=(X_test, Y_test))
 
 print("All good")
 

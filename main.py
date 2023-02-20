@@ -12,6 +12,8 @@ cap.set(cv.CAP_PROP_AUTOFOCUS, 0)
 cap.set(cv.CAP_PROP_AUTO_WB, 1)
 cap.set(cv.CAP_PROP_AUTO_EXPOSURE, 0.25) #manual mode
 cap.set(cv.CAP_PROP_EXPOSURE, -4)
+# cap.set(cv.CAP_PROP_AUTO_EXPOSURE, 0.25) 
+# cap.set(cv.CAP_PROP_EXPOSURE, -7)
 
 if not cap.isOpened():
     print("Cannot open camera")
@@ -82,7 +84,6 @@ while True:
     frame = np.dot(frame[...,:3], [0.2989, 0.5870, 0.1140]) / 255
     frame_blured = cv.GaussianBlur(frame, (21, 21), cv.BORDER_DEFAULT)
 
-    
     if time.time() - last_frame_time > 1 / fps:
         last_frame_time = time.time()
 
