@@ -7,13 +7,12 @@ import time
 import math
 import tensorflow as tf
 
-cap = cv.VideoCapture(1)
+cap = cv.VideoCapture(0)
 cap.set(cv.CAP_PROP_AUTOFOCUS, 0)
 cap.set(cv.CAP_PROP_AUTO_WB, 1)
 cap.set(cv.CAP_PROP_AUTO_EXPOSURE, 0.25) #manual mode
 cap.set(cv.CAP_PROP_EXPOSURE, -4)
-# cap.set(cv.CAP_PROP_AUTO_EXPOSURE, 0.25) 
-# cap.set(cv.CAP_PROP_EXPOSURE, -7)
+
 
 if not cap.isOpened():
     print("Cannot open camera")
@@ -26,8 +25,6 @@ colors = {"blue": (255, 0, 0), "green": (0,255,0)}
 model = tf.keras.models.load_model("cnn1")
 decoding = [chr(i) for i in range(65, 91)]
 x_start, y_start, x_end, y_end = 50, 150, 350, 450
-
-
 
 def get_pixels_hands(frame):
     hand_pixels = []
