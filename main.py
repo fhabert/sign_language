@@ -51,7 +51,7 @@ def show_hist(frame):
 
 background_pix = None
 start_time = time.time()
-threshold_pix = 0.05
+threshold_pix = 0.08
 
 lines_coor = [[(x_start, y_start), (x_end, y_start)], [(x_start, y_end), (x_end, y_end)], 
             [(x_start, y_start), (x_start, y_end)], [(x_end, y_start), (x_end, y_end)]]
