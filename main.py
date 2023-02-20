@@ -51,7 +51,7 @@ def show_hist(frame):
 
 background_pix = None
 start_time = time.time()
-threshold_pix = 0.08
+threshold_pix = 0.01
 
 lines_coor = [[(x_start, y_start), (x_end, y_start)], [(x_start, y_end), (x_end, y_end)], 
             [(x_start, y_start), (x_start, y_end)], [(x_end, y_start), (x_end, y_end)]]
@@ -101,8 +101,8 @@ while True:
         if hand_present:
             frame_28 = np.asarray(Image.fromarray(frame).resize((28,28)))
             # reshape_feature = np.reshape(frame_28, (1, 28, 28, 1))
-            # plt.imshow(frame_28)
-            # plt.show()
+            plt.imshow(frame_28, cmap='gray', vmin=0, vmax=1)
+            plt.show()
             frame_28 = frame_28.reshape(1, 28, 28, 1)
             pred = model.predict(frame_28, verbose=0)
             final_output = round(np.argmax(pred[0]))
