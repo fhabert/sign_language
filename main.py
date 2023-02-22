@@ -7,7 +7,7 @@ import time
 import math
 import tensorflow as tf
 
-cap = cv.VideoCapture(0)
+cap = cv.VideoCapture(1)
 cap.set(cv.CAP_PROP_AUTOFOCUS, 0)
 cap.set(cv.CAP_PROP_AUTO_WB, 1)
 cap.set(cv.CAP_PROP_AUTO_EXPOSURE, 0.25) #manual mode
@@ -105,10 +105,10 @@ while True:
             pred = model.predict(frame_28, verbose=0)
             final_output = round(np.argmax(pred[0]))
             print("letter: ", decoding[final_output])
-            # if len(word) == 0:
-            #     word.append(decoding[final_output])
-            # else:
-            #     word.append(decoding[final_output].lower())
+            if len(word) == 0:
+                word.append(decoding[final_output])
+            else:
+                word.append(decoding[final_output].lower())
 
 print("The word was:", ("").join(word))
 cap.release()
